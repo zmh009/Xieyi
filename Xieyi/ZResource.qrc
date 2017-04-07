@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/picture">
+        <file alias="clear">picture/clear.jpg</file>
+        <file alias="help">picture/find.png</file>
+        <file alias="ZAPP">picture/qtIcon.jpg</file>
+        <file alias="restart">picture/restart.png</file>
+        <file alias="start">picture/start.png</file>
+        <file alias="stop">picture/stop.JPG</file>
+    </qresource>
+</RCC>

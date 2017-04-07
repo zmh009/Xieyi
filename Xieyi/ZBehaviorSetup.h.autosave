@@ -1,0 +1,16 @@
+/*
+ * 用于用户配置行为，属于输入模块的窗口
+*/
+
+#ifndef ZBEHAVIORSETUP_H
+#define ZBEHAVIORSETUP_H
+
+#include <QWidget>
+
+class ZBehaviorSetup
+{
+public:
+    ZBehaviorSetup();
+};
+
+#endif // ZBEHAVIORSETUP_H
