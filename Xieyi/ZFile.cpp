@@ -44,12 +44,18 @@ int ZFile::write(const std::__cxx11::string &filePath, const std::__cxx11::strin
     // 判断是否写入成功
     if (!mOfstr)
     {
+        mError = string("write to ") + filePath + " error";
         return -1;
     }
     else
     {
         return 0;
     }
+}
+
+std::__cxx11::string ZFile::getError() const
+{
+    return mError;
 }
 
 /* 对一个文件创建其所在的目录,字符'/'前被认为是目录名
@@ -87,6 +93,7 @@ int ZFile::createDir(const std::__cxx11::string &filePath)
             int ret = mkdir(dir, mode);
             // 如果创建出错则返回-1
             if (ret == -1) {
+                mError = string("create directory ") + dir + " error";
                 return -1;
             }
         }

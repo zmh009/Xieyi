@@ -135,12 +135,12 @@ void MainWindow::initTable()
 
 void MainWindow::startSlot()
 {
+    mControlTask->startTask();
+
     mMainWidget->setCurrentIndex(1);
     mStartAction->setDisabled(true); // 启动时不可再次使用
     mStopAction->setEnabled(true); // 启动时停止功能可用
     mRestartAction->setEnabled(true); // 启动时重启功能可用
-
-    mControlTask->startTask();
 }
 
 void MainWindow::stopSlot()

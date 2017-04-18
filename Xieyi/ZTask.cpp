@@ -11,7 +11,7 @@ ZTask::~ZTask()
     ;
 }
 
-ZTask::ZTask(const function<void ()> &task) : mFunction(task)
+ZTask::ZTask(const FunctionT &task) : mFunction(task)
 {
     ;
 }
@@ -21,7 +21,7 @@ void ZTask::run()
     mFunction();
 }
 
-void ZTask::setFunction(const function<void ()> &task)
+void ZTask::setFunction(const FunctionT &task)
 {
     mFunction = task;
 }

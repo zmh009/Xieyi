@@ -29,6 +29,7 @@ int ZCapture::start()
     capHandlerT *handler = getHandler();
     if (handler == nullptr)
     {
+//        mInformation.promptError(string("捕获配置设置错误"),string("停止抓捕:")+string(mError));
         return -1;
     }
 
@@ -52,6 +53,7 @@ int ZCapture::start()
         string networkData((const char*)(data), length);
         if (mBuffer->addData(networkData) == -1)
         {
+//            mInformation.promptError(string("捕获但未添加"),string("停止抓捕:")+string(""));
             return -1;
         }
     }
@@ -154,14 +156,20 @@ capHandlerT *ZCapture::getHandler()
     }
     if (pcap_compile(mHandler, &filterSt, mFilter, 1, netmask) != 0) // 获得当前的过滤器出错, 1为优化控制过滤器程序
     {
+        strncpy(mError, EFILTER, PCAP_ERRBUF_SIZE-1);
+        mError[PCAP_ERRBUF_SIZE-1] = '\0';
         goto errorOpr;
     }
     if (pcap_setfilter(mHandler, &filterSt) != 0) // 设置过滤器出错
     {
+        strncpy(mError, ESET_FILTER, PCAP_ERRBUF_SIZE-1);
+        mError[PCAP_ERRBUF_SIZE-1] = '\0';
         goto errorOpr;
     }
     if (pcap_datalink(mHandler) != 1)  // 非以太网
     {
+        strncpy(mError, ELINKLAYOUT, PCAP_ERRBUF_SIZE-1);
+        mError[PCAP_ERRBUF_SIZE-1] = '\0';
         goto errorOpr;
     }
     return mHandler;
@@ -170,7 +178,6 @@ capHandlerT *ZCapture::getHandler()
 errorOpr:
     close();
     return nullptr;
-
 }
 
 const char *ZCapture::getError() const

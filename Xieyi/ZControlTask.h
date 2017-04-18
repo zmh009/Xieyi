@@ -2,6 +2,9 @@
 #define ZCONTROLTASK_H
 
 #include <QDebug>
+
+#include <QObject>
+#include <QThread>
 #include "ZTask.h"
 
 //#include "ZPcapOption.h"
@@ -10,15 +13,24 @@
 #include "ZResponseWidget.h"
 #include "ZRestore.h"
 #include "ZResponse.h"
+#include "ZInformation.h"
 
-class ZControlTask
+class ZControlTask : public QObject
 {
+    Q_OBJECT
 public:
     ZControlTask();
     ~ZControlTask();
 
     void startTask();
     void stopTask();
+
+signals:
+//    void
+    void promptWarn(const QString& title, const QString& text);
+//    void promptWarn(const char* title, const char* text);
+    void promptError(const QString& title, const QString& text);
+//    void promptError(const char* title, const char* text);
 
 private:
     // 底层应用功能
@@ -28,6 +40,10 @@ private:
 
     //void endTask(const ZTask &task);
 
+//    QThread mCaptureThread;
+//    QThread mRestoreThread;
+//    QThread mResponseThread;
+
     ZTask mCaptureTask;
     ZTask mRestoreTask;
     ZTask mResponseTask;
@@ -36,6 +52,11 @@ private:
     ZRestore mRestore;
     ZResponse mResponse;
     ZSetupWidget *mSetupWidget;
+
+    ZInformation mInformation;
+
+    QString mErrorTitle;
+    QString mErrorText;
 };
 
 #endif // ZCONTROLTASK_H

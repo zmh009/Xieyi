@@ -24,11 +24,14 @@ public:
     ~ZFile();
 
     int write(const string &filePath, const string &data, bool isBinary);
+    string getError() const;
 
 private:
     int createDir(const string &filePath);
     // bool IsExist();
     ofstream mOfstr;
+
+    string mError;
 };
 
 #endif // ZFILE_H

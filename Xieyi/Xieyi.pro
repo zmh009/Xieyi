@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     ZIpv4.cpp \
     ZTcp.cpp \
     ZUdp.cpp \
-    ZMac.cpp
+    ZMac.cpp \
+    ZInformation.cpp
 
 HEADERS  += mainwindow.h \
     ZSetupWidget.h \
@@ -55,7 +56,8 @@ HEADERS  += mainwindow.h \
     ITransport.h \
     IApplication.h \
     ZMac.h \
-    INetwork.h
+    INetwork.h \
+    ZInformation.h
 
 FORMS    += mainwindow.ui
 

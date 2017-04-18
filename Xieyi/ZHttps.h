@@ -1,5 +1,6 @@
 #ifndef ZHTTPS_H
 #define ZHTTPS_H
+#define ENCODE_SSL "SSL"
 
 #include "IApplication.h"
 //#include "ZTypeConvert.h"
@@ -31,9 +32,9 @@ public:
     const u_char *dataContent() const;
     int dataLen() const;
 
-    const string &dataType() const;
-    const string &compressionType() const;
-    const string &encodeType() const;
+    string dataType() const;
+    string compressionType() const;
+    string encodeType() const;
 
     bool isBinary() const;
 

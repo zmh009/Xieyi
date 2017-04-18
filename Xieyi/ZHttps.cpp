@@ -8,7 +8,7 @@ ZHttps::ZHttps()
     mIsBinary = true;
     mDataType = "";
     mCompression = "";
-    mEncode = ".SSL";
+    mEncode = ENCODE_SSL;
 }
 
 ZHttps::~ZHttps()
@@ -40,7 +40,7 @@ void ZHttps::setApplicationContent(const u_char *content, int length)
     mIsBinary = true;
     mDataType = "";
     mCompression = "";
-    mEncode = ".SSL";
+    mEncode = ENCODE_SSL;
 
     // 如果数据有错误，则清空原有数据，否则设置新数据
     if (content == NULL || length <= 5) //the length of ssl head is more then 5
@@ -69,7 +69,7 @@ int ZHttps::dataLen() const
     return mDataLen;
 }
 
-const std::__cxx11::string &ZHttps::dataType() const
+std::__cxx11::string ZHttps::dataType() const
 {
 //    if (mHttpsContent == nullptr || mDataLen <= 0)
 //    {
@@ -79,7 +79,7 @@ const std::__cxx11::string &ZHttps::dataType() const
     return mDataType;
 }
 
-const std::__cxx11::string &ZHttps::compressionType() const
+std::__cxx11::string ZHttps::compressionType() const
 {
 //    if (mHttpsContent == nullptr || mHttpsLen <= 0)
 //    {
@@ -89,7 +89,7 @@ const std::__cxx11::string &ZHttps::compressionType() const
     return mCompression;
 }
 
-const std::__cxx11::string &ZHttps::encodeType() const
+std::__cxx11::string ZHttps::encodeType() const
 {
 //    if (mHttpsContent == nullptr || mHttpsLen <= 0)
 //    {

@@ -3,12 +3,16 @@
 #define OPTION_MAX_SIZE     65535
 #define OPTION_PROSIMC      0
 #define OPTION_WAIT_TIME    1000
+#define EFILTER     "过滤器表达式错误"
+#define ESET_FILTER "设置过滤器表达式错误"
+#define ELINKLAYOUT "非以太网络"
 
 #include <string>
 #include <pcap.h>
 //#include "ZPcapOption.h"
 #include "ZBuffer.h"
 //#include "ZNetworkData.h"
+//#include "ZInformation.h"
 using std::string;
 //__test
 #include <iostream>
@@ -49,6 +53,7 @@ private:
 private:
     //ZPcapOption mOption;
 
+//    ZInformation mInformation;
     ZBuffer* mBuffer;
     capHandlerT *mHandler;
 
