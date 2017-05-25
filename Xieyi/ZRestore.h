@@ -65,8 +65,8 @@ public:
     ZRestore();
     ~ZRestore();
 //    void start(RestoreStatusE status);
-    int restoreToFile(const string &dirPath);
-    int restoreToSQL(const string &dbName);
+    int restoreToFile(string dirPath);
+    int restoreToSQL(string dbName);
 
     void stop();
 

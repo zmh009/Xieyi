@@ -1,7 +1,6 @@
 #include "ZControlTask.h"
 
-ZControlTask::ZControlTask() :
-    mResponseTask([](){qDebug() << "response";})
+ZControlTask::ZControlTask()
 {
     // 获得配置界面，以根据选项启动任务
     mSetupWidget = ZSetupWidget::getSetupWidget();
@@ -42,7 +41,7 @@ void ZControlTask::stopTask()
     mRestoreTask.wait();
 //    mRestoreThread.wait();
 
-    mResponse.stop();
+    mBehaviorAnalysis.stop();
     mResponseTask.wait();
 //    mResponseThread.wait();
 }
@@ -55,17 +54,16 @@ int ZControlTask::startCapture()
     QString waitTime = mSetupWidget->getTime();
 
     // 设置捕获数据应用的配置信息
-    if (!netcard.isEmpty())
+    mCapture.setNetcard(netcard.toStdString());
+    mCapture.setFilter(filter.toStdString());
+    if (waitTime.length() < TIME_MAX_LENGTH)
     {
-        mCapture.setNetcard(netcard.toStdString().c_str());
-    }
-    if (!filter.isEmpty())
-    {
-        mCapture.setFilter(filter.toStdString().c_str());
-    }
-    if (!waitTime.isEmpty() && waitTime.length() < TIME_MAX_LENGTH)
-    {
-        mCapture.setWaitTime(waitTime.toUInt());
+        u_int time = waitTime.toUInt();
+        if (time <= 0)
+        {
+            time = OPTION_WAIT_TIME;
+        }
+        mCapture.setWaitTime(time);
     }
 
     mCaptureTask.setFunction(
@@ -119,6 +117,14 @@ int ZControlTask::startRestore()
 
 int ZControlTask::startResponse()
 {
+    mResponseTask.setFunction([&](){ // lamdba可调用对象
+        if (0 > mBehaviorAnalysis.start())
+        {
+            mErrorTitle = "行为分析停止";
+            mErrorText = mBehaviorAnalysis.getError().c_str();
+            emit this->promptError(mErrorTitle, mErrorText);
+        }
+    });
     mResponseTask.start();
 //    mResponseThread.start();
     return 0;

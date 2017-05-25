@@ -19,7 +19,7 @@ public:
 signals:
 
 public slots:
-    void add(unsigned long time, const string &type, const string &behavior, unsigned int size); // 添加一行信息
+    void add(const std::__cxx11::string &time, const string &type, const string &behavior, unsigned int size); // 添加一行信息
     void clear(); // 清除所有信息
 
 protected:

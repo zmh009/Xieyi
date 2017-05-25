@@ -12,8 +12,10 @@
 #include "ZSetupWidget.h"
 #include "ZResponseWidget.h"
 #include "ZRestore.h"
-#include "ZResponse.h"
+//#include "ZResponse.h"
+#include "ZBehaviorAnalysis.h"
 #include "ZInformation.h"
+
 
 class ZControlTask : public QObject
 {
@@ -50,7 +52,9 @@ private:
 
     ZCapture mCapture;
     ZRestore mRestore;
-    ZResponse mResponse;
+//    ZResponse mResponse;
+    ZBehaviorAnalysis mBehaviorAnalysis;
+
     ZSetupWidget *mSetupWidget;
 
     ZInformation mInformation;

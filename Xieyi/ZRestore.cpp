@@ -13,17 +13,12 @@ ZRestore::~ZRestore()
     mBuffer->closeRead(mBufferHandler);
 }
 
-int ZRestore::restoreToFile(const std::__cxx11::string &dirPath)
+int ZRestore::restoreToFile(std::__cxx11::string dirPath)
 {
     // 提供默认存储路径ZRestoreLocation
-    const char *path = dirPath.c_str();
-    if (path == nullptr)
-    {
-        path = "nullptr";
-    }
     if (dirPath.empty())
     {
-        path = "ZRestoreLocation";
+        dirPath = "./ZRestoreLocation";
     }
 
     // 获取执行时的函数返回值，在结束时反馈外部调用以检测是否有错误发生
@@ -72,34 +67,39 @@ int ZRestore::restoreToFile(const std::__cxx11::string &dirPath)
 //        QThread::sleep(1);
     }
 
-    // 在运行结束后不会捕获到会话结束报文，可能会占用额外空间与产生数据误差，所以运行结束后要清除历史记录
+    // 在运行结束后不会捕获到后续的会话结束报文，可能会占用额外空间与产生数据误差，所以运行结束后要清除历史记录
     clearHistory();
     return ret;
 }
 
 /* 存储数据库位置为：库名/dataContent、库名/dataItem；
  * 数据表列：
- * dataContent：index(time)、 sequence（time）、data（bool）；
- * dataItem：sequence(time)、dataType(varchar(20))、encodeType(varchar(5))、compressionType(varchar(5))、
+ * dataContent：index(time)、 sequence（time）、data（blob）；
+ * dataItem：sequence(time)、dataType(varchar(50))、encodeType(varchar(5))、compressionType(varchar(5))、
  *           dstIp（varchar(15)）、dstPort（short_int）、srcIp（varchar(15)）、srcPort（short_int）；
  * 存储时不重组数据包，因为数据可能累积超出数据表的设置上限，数据内容与序号是一对多关系，添加index为主键，时间戳类型
  * 序号和数据类型、加密类型、压缩类型、目的IP、目的端口、源IP、源端口是一对一关系，设置sequence为主键
  * 所以使用序号关联一组数据明显，同时dataContent的序号sequence为dataItem的外键。
  */
-int ZRestore::restoreToSQL(const std::__cxx11::string &dbName)
+int ZRestore::restoreToSQL(std::__cxx11::string dbName)
 {
     // 提供默认存储路径ZRestoreLocation
-    const char *path = dbName.c_str();
     if (dbName.empty())
     {
-        path = "ZRestoreLocation";
+        dbName = "ZRestoreLocation";
     }
 
     // 获取执行时的函数返回值，在结束时反馈外部调用以检测是否有错误发生
     int ret = 0;
     // 获得SQL交互接口
+    ZSQL sql;
     // 连接到数据库
-    // 如果不存在存储数据的数据库和数据表则创建，在捕获数据后可直接存入
+    // 存储数据的数据库和数据表要提前创建，在捕获数据后可直接存入
+    if (0 != sql.connect("root", "westos", dbName))
+    {
+        mError = sql.getError();
+        return -1;
+    }
     // stop方法会将mRun置为false，因此在每次start里将mRun置为true
     mRun = true;
     while (mRun)
@@ -111,18 +111,82 @@ int ZRestore::restoreToSQL(const std::__cxx11::string &dbName)
         }
 
         // 获得数据明显
+        ZItem item = getItem(networkData);
         // 数据为空则不操作
+        if (item.mData.empty())
+        {
+            continue;
+        }
+
         // 如果序号不存在于dataItem表，则需写入
+        string condition = "sequence = " + item.mSequence;
+        ret = sql.select("select * from dataItem where " + condition);
+        if (ret == 0)
+        {
+            // 向dataItem表添加记录
+//            if ( 0 != sql.insert("dataItem",
+//                                 map<string, ZSQL::valueType>({
+//                                     {"sequence", item.mSequence.c_str()},
+//                                     {"dataType", item.mDataType.c_str()},
+//                                     {"encodeType", item.mEncodeType.c_str()},
+//                                     {"compressionType", item.mCompressionType.c_str()},
+//                                     {"dstIp", item.mDstIp.c_str()},
+//                                     {"dstPort", item.mDstPort},
+//                                     {"srcIp", item.mSrcIp.c_str()},
+//                                     {"srcPort", item.mSrcPort}
+//                                     })
+//                                 )
+//                )
+            if (0 != sql.insert("insert dataItem values(" +
+                                item.mSequence + ",'" +
+                                item.mDataType + "','" +
+                                (item.mEncodeType.empty() ? "-" : item.mEncodeType) + "','" +
+                                (item.mCompressionType.empty() ? "-" : item.mCompressionType) + "','" +
+                                item.mDstIp + "'," +
+                                std::to_string(item.mDstPort) + ",'" +
+                                item.mSrcIp + "'," +
+                                std::to_string(item.mSrcPort) + ")")
+                    )
+            {
+                // 有错误则记录
+                mError = sql.getError();
+                ret = -1;
+                break;
+            }
+        }
+        else if (ret < 0)
+        {
+            // 有错误则记录
+            mError = sql.getError();
+            break;
+        }
+
         // 有捕获的数据就要写入dataContent表
-        // 有错误则记录
-//        QThread::sleep(1);
-//        qDebug() << "restore to sql in "<< path;
+        // 二进制数据转义
+        string escape;
+        if (0 != sql.binaryEscape(item.mData, escape))
+        {
+            mError = sql.getError();
+            ret = -1;
+            break;
+        }
+        if (0 != sql.insert("insert dataContent values(NULL, "+
+                            item.mSequence + ",'" +
+                            escape.c_str() +"')"
+                            )
+            )
+        {
+            // 有错误则记录
+            mError = sql.getError();
+            ret = -1;
+            break;
+        }
     }
 
     // 在运行结束后不会捕获到会话结束报文，可能会占用额外空间与产生数据误差，所以运行结束后要清除历史记录
     clearHistory();
     // 关闭数据库连接
-
+    sql.close();
     return ret;
 }
 
@@ -361,23 +425,38 @@ void ZRestore::setRecombineIndex(ZItem &item)
     case ZItem::FINISH:
     {
         RecordT record = mHistoryRecord[dataIndex];
-        if (!record.empty() && item.mData.empty())
+        if (!record.empty())
         {
-            // 存在索引且数据类型为空
+            // 存在索引且数据类型为空,可能在会话终止时携带数据，则需要存储该数据的详情以支持数据重组
             item.mSequence = record[SEQUENCE_KEY];
             item.mDataType = record[DATA_TYPE_KEY];
             item.mEncodeType = record[ENCODE_TYPE_KEY];
             item.mCompressionType = record[COMPRESSION_TYPE_KEY];
         }
-        else if (record.empty())
-        {
-            // 不存在索引
-            item.mSequence = std::to_string(getUniqueTime());
-        }
         else
         {
-            // 存在且数据类型不为空，无操作
+            // 该终止会话是新的会话
+            item.mSequence = std::to_string(getUniqueTime());
+            item.mDataType = TYPE_OTHER;
         }
+//        if (!record.empty() && item.mData.empty())
+//        {
+//            // 存在索引且数据类型为空
+//            item.mSequence = record[SEQUENCE_KEY];
+//            item.mDataType = record[DATA_TYPE_KEY];
+//            item.mEncodeType = record[ENCODE_TYPE_KEY];
+//            item.mCompressionType = record[COMPRESSION_TYPE_KEY];
+//        }
+//        else if (record.empty())
+//        {
+//            // 不存在索引
+//            item.mSequence = std::to_string(getUniqueTime());
+//        }
+//        else
+//        {
+//            // 存在索引且数据类型不为空，无操作
+//            std::cout << "!record.empty() && !item.mData.empty()" << std::endl;
+//        }
 
         mHistoryRecord.erase(dataIndex);
 
@@ -415,10 +494,10 @@ void ZRestore::setRecombineIndex(ZItem &item)
     }
 
     //--test
-//    if (type == "")
-//    {
-//        type = "";
-//    }
+    if (item.mSequence.empty())
+    {
+        std::cout << "mSequence empty" << std::endl;
+    }
     // 数据的存储位置为时间戳与数据类型的拼接
 //    item.mStorageIndex = std::to_string(nowTime) + type;
 }

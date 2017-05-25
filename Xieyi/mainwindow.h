@@ -10,6 +10,7 @@
 #include <QMenu>
 #include <QIcon>
 #include <QKeySequence>
+#include <QMessageBox>
 #include "ZSetupWidget.h"
 #include "ZResponseWidget.h"
 #include "ZControlTask.h"

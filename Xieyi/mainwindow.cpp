@@ -168,7 +168,27 @@ void MainWindow::restartSlot()
     startSlot();
 }
 
+/* @brief 以窗口形式提供捕获配置的帮助信息
+ */
 void MainWindow::helpSlot()
 {
-    qDebug() << "help";
+    QString helpInformation = "捕获配置信息包括过滤器表达式、网卡信息、时间间隔。\n\n";
+    helpInformation += "过滤器表达式控制捕获流量的条件，包括端口、IP地址、传输方向等条件，如\n";
+    helpInformation += "port 80，捕获端口为80的网络流量；\n";
+//    helpInformation += "por-trange 6000-8000，捕获端口范围在6000-8000的网络流量；\n";
+    helpInformation += "host user，捕获主机为user的网络流量；\n";
+    helpInformation += "net 128.3，捕获网络范围在128.3之中的网络流量；\n";
+    helpInformation += "src port ftp-data，捕获源端口为ftp数据传输的网络流量；\n";
+    helpInformation += "dst or src net 128.3，捕获目的或源端口的网络范围在128.3之中的网络流量；\n";
+    helpInformation += "tcp port 21，捕获通过tcp协议在21端口传输的网络流量；\n";
+    helpInformation += "过滤器表达式可在tcpdump指南里查找，tcpdump官网www.tcpdump.org。\n\n";
+    helpInformation += "网卡名表示网络流量被捕获时经过的网卡名称，默认是本地第一个网卡名，\n";
+    helpInformation += "且必须被分配到IPv4地址，否则捕获设置出错而不能捕获数据。\n\n";
+    helpInformation += "时间间隔控制每次捕获网络流量时等待的时间，单位为秒，默认时间为1秒。";
+
+    // 通过Qt内存管理机制，避免内存泄漏
+    QMessageBox *helpMessageBox = new QMessageBox(this);
+    helpMessageBox->setWindowTitle("捕获配置帮助信息");
+    helpMessageBox->setText(helpInformation);
+    helpMessageBox->show();
 }

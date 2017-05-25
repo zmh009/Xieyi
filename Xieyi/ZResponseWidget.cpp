@@ -38,21 +38,21 @@ void ZResponseWidget::resizeEvent(QResizeEvent *event)
 {
     QSize size = event->size();
     // 设置每列的宽度
-    mInformationArea->setColumnWidth(0, size.width()/5*1);
-    mInformationArea->setColumnWidth(1, size.width()/5*1);
-    mInformationArea->setColumnWidth(2, size.width()/5*2);
-    mInformationArea->setColumnWidth(3, size.width()/5*1);
+    mInformationArea->setColumnWidth(0, size.width()/10*2);
+    mInformationArea->setColumnWidth(1, size.width()/10*2);
+    mInformationArea->setColumnWidth(2, size.width()/10*5);
+    mInformationArea->setColumnWidth(3, size.width()/10*1);
     // 设置修改大小模式为用户不可编辑
-    mInformationArea->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+//    mInformationArea->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 }
 
-void ZResponseWidget::add(unsigned long time, const string &type, const string &behavior, unsigned int size)
+void ZResponseWidget::add(const string &time, const string &type, const string &behavior, unsigned int size)
 {
     int row = mInformationArea->rowCount();
     mInformationArea->insertRow(row);
 
     // 会转交QTableWidgetItme的所有权，避免内存泄露
-    QString timeShow = QString::number(time);
+    QString timeShow = QString(time.c_str());
     mInformationArea->setItem(row, 0, new QTableWidgetItem(timeShow));
     QString typeShow = QString(type.c_str());
     mInformationArea->setItem(row, 1, new QTableWidgetItem(typeShow));

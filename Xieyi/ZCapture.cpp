@@ -5,8 +5,6 @@ ZCapture::ZCapture()
     mBuffer = ZBuffer::getBuffer(2);
 
     mHandler = nullptr;
-    mFilter = nullptr;
-    mNetcard = nullptr;
     mMaxSize = OPTION_MAX_SIZE;
     mProsimc = OPTION_PROSIMC;
     mWaitTime = OPTION_WAIT_TIME;
@@ -67,7 +65,7 @@ int ZCapture::stop()
     return 0;
 }
 
-void ZCapture::setNetcard(const char *netcard)
+void ZCapture::setNetcard(const std::__cxx11::string netcard)
 {
     mNetcard = netcard;
 }
@@ -87,7 +85,7 @@ void ZCapture::setWaitTime(unsigned int waitTime)
     mWaitTime = waitTime;
 }
 
-void ZCapture::setFilter(const char *filter)
+void ZCapture::setFilter(const std::__cxx11::string filter)
 {
     mFilter = filter;
 }
@@ -130,17 +128,17 @@ const u_char *ZCapture::getData(capHandlerT *handler, pcap_pkthdr *infor)
 capHandlerT *ZCapture::getHandler()
 {
     // 获得初始的捕获句柄
-    if (mNetcard == nullptr)
+    if (mNetcard.empty())
     {
         // 默认获取第一个网卡名
         mNetcard = pcap_lookupdev(mError);
-        if (mNetcard == nullptr)
+        if (mNetcard.empty())
         {
             // 如果获取网卡名出错，返回NULL
             return nullptr;
         }
     }
-    mHandler = pcap_open_live(mNetcard, mMaxSize, mProsimc, mWaitTime, mError);
+    mHandler = pcap_open_live(mNetcard.c_str(), mMaxSize, mProsimc, mWaitTime, mError);
     if (mHandler == nullptr)
     {
         return nullptr;
@@ -150,19 +148,22 @@ capHandlerT *ZCapture::getHandler()
     struct bpf_program filterSt;
     bpf_u_int32 net;
     bpf_u_int32 netmask;
-    if (pcap_lookupnet(mNetcard, &net, &netmask, mError) != 0) // 获得当前的子网掩码出错
+    if (pcap_lookupnet(mNetcard.c_str(), &net, &netmask, mError) != 0) // 获得当前的子网掩码出错
     {
         goto errorOpr;
     }
-    if (pcap_compile(mHandler, &filterSt, mFilter, 1, netmask) != 0) // 获得当前的过滤器出错, 1为优化控制过滤器程序
+    std::cout << mFilter << std::endl;
+    if (pcap_compile(mHandler, &filterSt, mFilter.c_str(), 1, netmask) != 0) // 获得当前的过滤器, 1为优化控制过滤器程序
     {
-        strncpy(mError, EFILTER, PCAP_ERRBUF_SIZE-1);
+        const char *pcapError = pcap_geterr(mHandler);
+        strncpy(mError, pcapError, PCAP_ERRBUF_SIZE-1);
         mError[PCAP_ERRBUF_SIZE-1] = '\0';
         goto errorOpr;
     }
     if (pcap_setfilter(mHandler, &filterSt) != 0) // 设置过滤器出错
     {
-        strncpy(mError, ESET_FILTER, PCAP_ERRBUF_SIZE-1);
+        const char *pcapError = pcap_geterr(mHandler);
+        strncpy(mError, pcapError, PCAP_ERRBUF_SIZE-1);
         mError[PCAP_ERRBUF_SIZE-1] = '\0';
         goto errorOpr;
     }

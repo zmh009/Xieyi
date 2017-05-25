@@ -91,13 +91,15 @@ std::__cxx11::string ZMac::getMacAddress(const u_char *mac)
         return string();
     }
 
+    static char tenTo16[16] = {'0','1','2','3','4','5','6','7','8','9',
+                               'A','B','C','D','E','F'};
     string macAddress = "";
     for (size_t i = 0; i < MAC_ADDRESS_LENGTH; ++i)
     {
         // 将一个字节的前4位与后4位转为字符类型，并在每个字节之间添加':'字符，拼接为string类型
-        macAddress += (mac[i] & 0xF0) + '0';
-        macAddress += (mac[i] & 0x0F) + '0';
-        if (i != MAC_ADDRESS_LENGTH)
+        macAddress += tenTo16[int(mac[i] & 0xF0) >> 4];
+        macAddress += tenTo16[int(mac[i] & 0x0F)];
+        if (i != MAC_ADDRESS_LENGTH-1)
         {
             macAddress += ':';
         }

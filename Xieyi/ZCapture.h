@@ -30,14 +30,14 @@ public:
     int start();
     int stop();
 
-    void setNetcard(const char *netcard);
+    void setNetcard(const string netcard);
     void setMaxSize(unsigned int maxSize);
     void setProsimc(int prosimc);
     void setWaitTime(unsigned int waitTime);
-    void setFilter(const char* filter);
+    void setFilter(const string filter);
 
     //void setOption(const ZPcapOption &option);
-    const char *getError() const;
+    const char* getError() const;
 
 private:
     const u_char* getData(capHandlerT *handler, pcap_pkthdr *infor);
@@ -57,8 +57,8 @@ private:
     ZBuffer* mBuffer;
     capHandlerT *mHandler;
 
-    const char* mFilter;
-    const char* mNetcard;
+    string mFilter;
+    string mNetcard;
     unsigned int mMaxSize;
     unsigned int mWaitTime;
     int mProsimc;

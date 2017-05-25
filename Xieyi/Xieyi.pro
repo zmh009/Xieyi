@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -32,7 +32,9 @@ SOURCES += main.cpp\
     ZTcp.cpp \
     ZUdp.cpp \
     ZMac.cpp \
-    ZInformation.cpp
+    ZInformation.cpp \
+    ZBehaviorAnalysis.cpp \
+    ZBeheviorResponse.cpp
 
 HEADERS  += mainwindow.h \
     ZSetupWidget.h \
@@ -57,7 +59,9 @@ HEADERS  += mainwindow.h \
     IApplication.h \
     ZMac.h \
     INetwork.h \
-    ZInformation.h
+    ZInformation.h \
+    ZBehaviorAnalysis.h \
+    ZBeheviorResponse.h
 
 FORMS    += mainwindow.ui
 
@@ -68,8 +72,15 @@ win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../usr/local/lib/
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../usr/local/lib/debug/ -lpcap
 else:unix: LIBS += -L$$PWD/../../../../usr/local/lib/ -lpcap
 
+LIBS += -lconfig++
+
 INCLUDEPATH += $$PWD/../../../../usr/local/include
 DEPENDPATH += $$PWD/../../../../usr/local/include
 
 RESOURCES += \
     ZResource.qrc
+
+unix:!macx: LIBS += -L$$PWD/../../../../usr/lib/x86_64-linux-gnu/ -lmysqlclient
+
+INCLUDEPATH += $$PWD/../../../../usr/lib/x86_64-linux-gnu
+DEPENDPATH += $$PWD/../../../../usr/lib/x86_64-linux-gnu
