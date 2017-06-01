@@ -52,30 +52,6 @@ ZBuffer::networkDataT ZBuffer::read(const readHandlerT &handler)
     return data;
 }
 
-//void ZBuffer::closeRead(const readHandlerT &handler)
-//{
-//    mBufferPool.erase(handler);
-//}
-
-//int ZBuffer::addData(const u_char *networkData)
-//{
-//    qDebug()<<"in addData u_char";
-//    QThread::sleep(1);
-//    return 0;
-//}
-
-//int ZBuffer::addData(const ZNetworkData &networkData)
-//{
-////    qDebug()<<"in addData networkData, add length is "<< networkData.length();
-////    QThread::sleep(1);
-//    for (auto &each : mBufferPool)
-//    {
-//        qDebug() << "add length is "<< networkData.length();
-//        each.push(networkData);
-//    }
-//    return 0;
-//}
-
 int ZBuffer::addData(const string &networkData)
 {
     for (auto &each : mBufferPool)

@@ -49,22 +49,14 @@ int ZRestore::restoreToFile(std::__cxx11::string dirPath)
                         "" : ('.' + item.mEncodeType);
             filePath += item.mCompressionType.empty() ?
                         "" : ('.' + item.mCompressionType);
-//            string index = getIndex(item);
-
-//            filePath += item.mStorageIndex /*+ item.mDataType + item.mEncodeType + item.mCompressionType*/;
 
             if ( -1 == file.write(filePath, item.mData, /*item.mIsBinary*/true)) // <--使用dstIP+dstPort+srcIP+srcPort做索引，tcp 的fin为tcp协议的删除标志，其他协议不存储历史文件名
             {
-                // --test
-                cout << "write error" << endl;
-                // --test end
                 ret = -1;
                 mError = file.getError();
                 break;
             }
-//            cout << item.mData << endl;
         }
-//        QThread::sleep(1);
     }
 
     // 在运行结束后不会捕获到后续的会话结束报文，可能会占用额外空间与产生数据误差，所以运行结束后要清除历史记录
@@ -124,19 +116,6 @@ int ZRestore::restoreToSQL(std::__cxx11::string dbName)
         if (ret == 0)
         {
             // 向dataItem表添加记录
-//            if ( 0 != sql.insert("dataItem",
-//                                 map<string, ZSQL::valueType>({
-//                                     {"sequence", item.mSequence.c_str()},
-//                                     {"dataType", item.mDataType.c_str()},
-//                                     {"encodeType", item.mEncodeType.c_str()},
-//                                     {"compressionType", item.mCompressionType.c_str()},
-//                                     {"dstIp", item.mDstIp.c_str()},
-//                                     {"dstPort", item.mDstPort},
-//                                     {"srcIp", item.mSrcIp.c_str()},
-//                                     {"srcPort", item.mSrcPort}
-//                                     })
-//                                 )
-//                )
             if (0 != sql.insert("insert dataItem values(" +
                                 item.mSequence + ",'" +
                                 item.mDataType + "','" +
@@ -211,15 +190,6 @@ ZItem ZRestore::getItem(const std::__cxx11::string &networkData)
 
     // -------------链路层分析------------
     const char *data = networkData.data();
-
-    // --test
-//    size_t length = networkData.length();
-//    for (size_t i = 0; i < length; ++i)
-//    {
-//        std::cout << std::setfill('0') << std::setw(2) << std::setbase(16)<< (int)(u_char)data[i] << " ";
-//    }
-//    std::cout << std::endl;
-    // --test end
     mMac.setLinkContent((const u_char*)data, networkData.length());
     const u_char* networkLayoutData = mMac.networkContent();
     int networkLen = mMac.networkLen();
@@ -235,7 +205,6 @@ ZItem ZRestore::getItem(const std::__cxx11::string &networkData)
     default:
         // 未知网络层协议类型,返回空明细
         return ZItem();
-//        break;
     }
     // 向明细里添加数据
     networkLayout->setNetworkContent(networkLayoutData, networkLen);
@@ -244,16 +213,15 @@ ZItem ZRestore::getItem(const std::__cxx11::string &networkData)
 
     // -------------运输层分析------------
     ITransport *transportLayout;
-//    int ipDataType = mIpv4.getDataType();
     int transportType = networkLayout->transportType();
     switch (transportType)
     {
     case TCP_TYPE:
+        // 如果是TCP连接，判断当前是否为结束的会话
         mTcp.setTransportContent(mIpv4.transportContent(), mIpv4.transportLen());
         if ( mTcp.sign() & FIN) // 是否为TCP一次会话的结束
         {
             item.mRecombine = ZItem::FINISH;
-            std::cout << "FINISH" << endl;
         }
         else
         {
@@ -268,31 +236,14 @@ ZItem ZRestore::getItem(const std::__cxx11::string &networkData)
         break;
     default:
         item.mRecombine = ZItem::NOT_RECOMBINE;
-        cout << "transportType is " << transportType << endl;
         return ZItem(); // 非TCP、UDP协议则返回空明细
-//        break;
     }
     // 向明显里添加数据
-//    transportLayout->setTransportContent(networkLayout->transportContent(), networkLayout->transportLen());
     item.mSrcPort = transportLayout->srcPort();
     item.mDstPort = transportLayout->dstPort();
-    // 如果是TCP连接，判断当前是否为结束的会话
 
     // -------------应用层分析------------
     IApplication *applicationLayout = nullptr;
-//    switch (item.mDstPort) // and item.mSrcPort
-//    {
-//    case HTTP_PORT:
-//        applicationLayout = &mHttp;
-//        break;
-//    case HTTPS_PORT:
-//        applicationLayout = &mHttps;
-//    default:
-//        // 向明显里添加数据
-//        // 未知应用层协议类型,进行返回空明细
-//        return ZItem();
-////        break;
-//    }
     if (item.mSrcPort == HTTP_PORT || item.mDstPort == HTTP_PORT)
     {
         applicationLayout = &mHttp;
@@ -323,11 +274,6 @@ ZItem ZRestore::getItem(const std::__cxx11::string &networkData)
         item.mLength = applicationLayout->dataLen();
         const u_char* dataContent = applicationLayout->dataContent();
         item.mData = string((const char*)dataContent, item.mLength);
-        if (item.mData == string("\r\n")) // <-- 获得gif文件时有01、0等非gif图像数据，其他图形、音频等类型文件可能有类似情况
-        {
-            std::cout << "\\r\\n:"<< item.mDstIp << "/" << item.mDstPort << "/"
-                      << "recive/" << item.mSrcIp << "/" << item.mDstPort<< std::endl;
-        }
     }
     else
     {
@@ -344,7 +290,6 @@ ZItem ZRestore::getItem(const std::__cxx11::string &networkData)
     {
         setRecombineIndex(item);
     }
-    // return item
     return item;
 }
 
@@ -364,27 +309,20 @@ void ZRestore::setRecombineIndex(ZItem &item)
             item.mDstIp+std::to_string(item.mDstPort);
 
     // 在需获取时间戳时才调用获取函数，可使在已有存储索引时避免调用
-//    time_t nowTime = 0;
-//    string type = "";
-//    string currentType = item.mDataType + item.mEncodeType + item.mCompressionType;
     switch (item.mRecombine)
     {
     // 当为不重组类型时，只设置序号
     case ZItem::NOT_RECOMBINE:
         item.mSequence = getUniqueTime();
-//        type = currentType;
         break;
     // 当为重组中时，如果存在索引则读取历史记录并设置所有类型和序号，如果不存在则创建；
     // 如果出现新的数据类型则要更新索引
     case ZItem::RECOMBINEING:
     {
-//        nowTime = mIndexPool[dataIndex];
-//        type = mTypePool[dataIndex];
         RecordT record = mHistoryRecord[dataIndex];
         if (record.empty() || !item.mDataType.empty())
         {
             // 无索引或有新数据类型时要更新索引
-
             item.mSequence = std::to_string(getUniqueTime());
 
             // 存在是新索引并且数据类型为空时的情况，如捕获到的新索引数据是当前会话正在传输的数据
@@ -408,17 +346,6 @@ void ZRestore::setRecombineIndex(ZItem &item)
             item.mEncodeType = record[ENCODE_TYPE_KEY];
             item.mCompressionType = record[COMPRESSION_TYPE_KEY];
         }
-//        if (nowTime == 0 || !item.mDataType.empty())
-//        {
-//            // 无索引或有新数据类型时要更新索引
-
-//            // 以时间戳与数据类型创建索引
-//            nowTime = getUniqueTime();
-//            type = !item.mDataType.empty() ? currentType : UNKNOW_TYPE;
-//            // 更新索引池与数据类型池
-//            mIndexPool[dataIndex] = nowTime;
-//            mTypePool[dataIndex] = type;
-//        }
         break;
     }
     // 当为结束时，如果存在索引且数据类型为空则要设置所有类型和序号，不存在则只创建序号，存在且数据类型不为空则无操作，最后统一删除
@@ -439,52 +366,8 @@ void ZRestore::setRecombineIndex(ZItem &item)
             item.mSequence = std::to_string(getUniqueTime());
             item.mDataType = TYPE_OTHER;
         }
-//        if (!record.empty() && item.mData.empty())
-//        {
-//            // 存在索引且数据类型为空
-//            item.mSequence = record[SEQUENCE_KEY];
-//            item.mDataType = record[DATA_TYPE_KEY];
-//            item.mEncodeType = record[ENCODE_TYPE_KEY];
-//            item.mCompressionType = record[COMPRESSION_TYPE_KEY];
-//        }
-//        else if (record.empty())
-//        {
-//            // 不存在索引
-//            item.mSequence = std::to_string(getUniqueTime());
-//        }
-//        else
-//        {
-//            // 存在索引且数据类型不为空，无操作
-//            std::cout << "!record.empty() && !item.mData.empty()" << std::endl;
-//        }
 
         mHistoryRecord.erase(dataIndex);
-
-//        nowTime = mIndexPool[dataIndex];
-//        type = mTypePool[dataIndex];
-//        // 时间戳索引不存在，则数据类型索引也不存在
-//        if (nowTime == 0)
-//        {
-//            nowTime = getUniqueTime();
-//            type = UNKNOW_TYPE;
-//        }
-//        mIndexPool.erase(dataIndex);
-//        mTypePool.erase(dataIndex);
-
-//        auto indexPos = mIndexPool.find(dataIndex);
-//        if (indexPos != mIndexPool.end())
-//        {
-//            nowTime = indexPos->second;
-//            type = mTypePool[dataIndex];
-//            mIndexPool.erase(indexPos);
-//            mTypePool.erase(dataIndex);
-//        }
-//        else
-//        {
-//            nowTime = getUniqueTime();
-//            type = item.mDataType + item.mEncodeType + item.mCompressionType;
-//        }
-        std::cout << "FINISH respond" <<"("<<mHistoryRecord.size()<<")"<< endl;
     }
         break;
     default:
@@ -492,14 +375,6 @@ void ZRestore::setRecombineIndex(ZItem &item)
         item.mSequence = std::to_string(getUniqueTime());
         break;
     }
-
-    //--test
-    if (item.mSequence.empty())
-    {
-        std::cout << "mSequence empty" << std::endl;
-    }
-    // 数据的存储位置为时间戳与数据类型的拼接
-//    item.mStorageIndex = std::to_string(nowTime) + type;
 }
 
 /* 获得唯一的时间戳，单位秒，如果短时间内获取则值向后推移
@@ -533,109 +408,6 @@ void ZRestore::clearHistory()
     mIndexPool.clear();
     mTypePool.clear();
 }
-
-const std::__cxx11::string ZRestore::stringAdd(const std::__cxx11::string &str1, const std::__cxx11::string &str2) const
-{
-    if (str1.empty())
-        {
-            return str2;
-        }
-    else if (str2.empty())
-    {
-        return str1;
-    }
-
-    // 让返回结果result作为相加操作的最长字符串并存储结果，在相加时减少空间申请的开销
-    string result = str1.size() > str2.size() ? str1 : str2;
-    const string &small = !(str1.size() > str2.size()) ? str1 : str2;
-    int index1 = result.size()-1;
-    int index2 = small.size()-1;
-    int carryNum = 0;
-    // 遍历较长的字符串result，
-    while (index1 >= 0 || index2 >= 0 || carryNum > 0)
-    {
-        int num1 = index1 >= 0 ? result[index1] - '0' : 0;
-        int num2 = index2 >= 0 ? small[index2] - '0' : 0;
-        int num3 = num1 + num2 + carryNum;
-        char nowNum = num3%10 + '0';
-        carryNum = num3/10;
-        // 相加位置未超出范围，如果遍历完两个字符串任然有进位数，则需要在结果的首位前添加该数字
-        if (index1 >= 0)
-        {
-            result[index1] = nowNum;
-        }
-        else
-        {
-            result = nowNum + result;
-        }
-
-        if (index1 >= 0)
-        {
-            --index1;
-        }
-        if (index2 >= 0)
-        {
-            --index2;
-        }
-    }
-
-    return result;
-}
-
-//INetwork *ZRestore::updateDatalinkItem(ZItem &item)
-//{
-//    mMac.setLinkContent((const u_char*)data, networkData.length());
-//    const u_char* networkLayoutData = mMac.networkContent();
-//    int networkLen = mMac.networkLen();
-//    int networkType = mMac.netkworkType();
-
-//    // -------------网络层分析------------
-//    INetwork *networkLayout;
-//    switch (networkType)
-//    {
-//    case IP_TYPE:
-//        networkLayout = &mIpv4;
-//        break;
-//    default:
-//        // 未知网络层协议类型,返回空明细
-//        return ZItem();
-////        break;
-//    }
-//}
-
-//ITransport *ZRestore::updateNetworkItem(ZItem &item)
-//{
-
-//}
-
-//IApplication *ZRestore::updataTransportItem(ZItem &item)
-//{
-
-//}
-
-//void ZRestore::updataApplicationItem(ZItem &item)
-//{
-
-//}
-
-//void ZRestore::start(RestoreStatusE status)
-//{
-//    switch (status)
-//    {
-//    case NORESTORE:
-//        qDebug() << "no restore";
-//        break;
-//    case RESTORE_TO_FILE:
-//        qDebug() << "restore to file";
-//        break;
-//    case RESTORE_TO_SQL:
-//        qDebug() << "restore to sql";
-//        break;
-//    default:
-//        qDebug() << "unknow case";
-//        break;
-//    }
-//}
 
 ZItem::ZItem()
 {

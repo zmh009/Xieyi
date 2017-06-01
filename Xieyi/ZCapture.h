@@ -8,15 +8,10 @@
 #define ELINKLAYOUT "非以太网络"
 
 #include <string>
+#include <cstring>
 #include <pcap.h>
-//#include "ZPcapOption.h"
 #include "ZBuffer.h"
-//#include "ZNetworkData.h"
-//#include "ZInformation.h"
 using std::string;
-//__test
-#include <iostream>
-#include <iomanip>
 
 typedef pcap_t capHandlerT;
 
@@ -24,7 +19,6 @@ class ZCapture
 {
 public:
     ZCapture();
-//    ZCapture(const ZPcapOption& option);
     ~ZCapture();
 
     int start();
@@ -36,24 +30,15 @@ public:
     void setWaitTime(unsigned int waitTime);
     void setFilter(const string filter);
 
-    //void setOption(const ZPcapOption &option);
     const char* getError() const;
 
 private:
     const u_char* getData(capHandlerT *handler, pcap_pkthdr *infor);
-    //int sendToBuffer(const ZNetWorkData &netWorkData);
     capHandlerT *getHandler();
     bool isStopStatus() const;
     void close();
 
-//    void showData(const u_char *data, u_int length);
-//    void setStopStatus(bool status = true);
-//    void setRunStatus(bool status = true);
-
 private:
-    //ZPcapOption mOption;
-
-//    ZInformation mInformation;
     ZBuffer* mBuffer;
     capHandlerT *mHandler;
 
@@ -65,7 +50,6 @@ private:
 
     bool mRun;
     char mError[PCAP_ERRBUF_SIZE] = {'\0'};
-
 };
 
 #endif // ZCAPTURE_H

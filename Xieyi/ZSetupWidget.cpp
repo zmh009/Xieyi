@@ -66,12 +66,6 @@ QString ZSetupWidget::getTime() const
 {
     QString time = mTime->displayText();
     return time;
-//    if (time.length() > TIME_MAX_LENGTH)
-//    {
-//        return -1;
-//    }
-
-//    return time.toInt();
 }
 
 ZSetupWidget *ZSetupWidget::getSetupWidget(QWidget *parent)

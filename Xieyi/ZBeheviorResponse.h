@@ -10,9 +10,6 @@
 using std::string;
 using std::ofstream;
 
-// test--
-#include <QDebug>
-
 class ZBeheviorResponse
 {
 public:

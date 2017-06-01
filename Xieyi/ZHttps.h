@@ -3,12 +3,6 @@
 #define ENCODE_SSL "SSL"
 
 #include "IApplication.h"
-//#include "ZTypeConvert.h"
-//#include "ZFileControl.h"
-
-//-----------------//
-#include <iostream>
-//-----------------//
 
 struct HttpsRecord
 {
@@ -39,7 +33,7 @@ public:
     bool isBinary() const;
 
     bool isAppData();
-//    int reserveData(const std::string &dir,const std::string &id);
+
 private:
     HttpsRecord *mHttpsContent;
     int mHttpsLen;

@@ -22,8 +22,7 @@
 #include "ZInformation.h"
 using std::string;
 using std::map;
-//typedef string DataIndexT;
-//typedef time_t
+
 typedef map<string, string> RecordT;
 
 // 捕获数据明细
@@ -32,7 +31,6 @@ struct ZItem
     ZItem();
     enum RecombineE{NOT_RECOMBINE, RECOMBINEING, FINISH} mRecombine; // 重组状态，有无须重组、重组中、结束
     bool mIsBinary; // 是否为二进制数据
-//    int  mIsFinal;  // 是否为一次会话的结束
     int mLength;    // 捕获数据的长度
     int mSrcPort;   // 捕获数据的源端口
     int mDstPort;   // 捕获数据的目的端口
@@ -42,29 +40,14 @@ struct ZItem
     string mSrcIp;  // 捕获数据的源IP
     string mDstIp;  // 捕获数据的目的IP
     string mData;   // 捕获的数据
-//    string mStorageIndex;  // 数据的存储索引
     string mSequence; // 数据的序号
 };
 
-//--test
-#include <QThread>
-#include <iostream>
-using std::cout;
-using std::endl;
-//enum RestoreStatusE
-//{
-//    NORESTORE = 0,
-//    RESTORE_TO_FILE,
-//    RESTORE_TO_SQL
-//};
-
-// 除去捕获的空数据报文?
 class ZRestore
 {
 public:
     ZRestore();
     ~ZRestore();
-//    void start(RestoreStatusE status);
     int restoreToFile(string dirPath);
     int restoreToSQL(string dbName);
 
@@ -74,23 +57,10 @@ public:
 
     ZItem getItem(const string &networkData);
 
-public:
-//    enum RestoreStatusE
-//    {
-//        NORESTORE = 0,
-//        RESTORE_TO_FILE,
-//        RESTORE_TO_SQL
-//    };
 private:
-//    void getIndex();
     void setRecombineIndex(ZItem& item);
     time_t getUniqueTime();
     void clearHistory();
-    const string stringAdd(const string &str1, const string &str2) const;
-//    INetwork *updateDatalinkItem(ZItem& item);
-//    ITransport *updateNetworkItem(ZItem& item);
-//    IApplication *updataTransportItem(ZItem& item);
-//    void updataApplicationItem(ZItem& item);
 
 private:
     ZBuffer *mBuffer;
@@ -103,7 +73,6 @@ private:
     ZHttps mHttps;
     bool mRun;
 
-//    static time_t mIndex; // 存储的索引,以支持数据分开存储,使用时间戳表示唯一的索引
     map<string, RecordT> mHistoryRecord; // 通过数据的IP和端口号映射历史记录，以支持数据重组
     map<string, time_t> mIndexPool; // 通过数据的IP和端口号映射数据的索引，以支持数据重组
     map<string, string> mTypePool; // 通过数据的IP和端口号映射数据类型,以支持数据恢复

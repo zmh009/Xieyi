@@ -64,7 +64,6 @@ int ZUdp::srcPort() const
     {
         return -1;
     }
-//    long num = toLong(mTcpContent->mSrcPort,2);
     int num = getPortFormat(mUdpContent->mSrcPort); // between max and min of unsigned short
     return num;
 }

@@ -155,7 +155,6 @@ void MainWindow::stopSlot()
 
 void MainWindow::clearSlot()
 {
-    qDebug() << "clear";
     mResponseWidget->clear();
 }
 
@@ -175,7 +174,6 @@ void MainWindow::helpSlot()
     QString helpInformation = "捕获配置信息包括过滤器表达式、网卡信息、时间间隔。\n\n";
     helpInformation += "过滤器表达式控制捕获流量的条件，包括端口、IP地址、传输方向等条件，如\n";
     helpInformation += "port 80，捕获端口为80的网络流量；\n";
-//    helpInformation += "por-trange 6000-8000，捕获端口范围在6000-8000的网络流量；\n";
     helpInformation += "host user，捕获主机为user的网络流量；\n";
     helpInformation += "net 128.3，捕获网络范围在128.3之中的网络流量；\n";
     helpInformation += "src port ftp-data，捕获源端口为ftp数据传输的网络流量；\n";

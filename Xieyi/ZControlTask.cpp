@@ -8,18 +8,10 @@ ZControlTask::ZControlTask()
     // 设置为允许跨线程调用信号槽，子线程里产生提示消息时可避免跨线程调用产生的崩溃
     connect(this, &ZControlTask::promptWarn, &mInformation, &ZInformation::promptWarn);
     connect(this, &ZControlTask::promptError, &mInformation, &ZInformation::promptError);
-
-    // 移动任务的执行位置为线程位置，以防止跨线程调用信号槽而产生的崩溃
-//    mCaptureTask.moveToThread(&mCaptureThread);
-//    mRestoreTask.moveToThread(&mRestoreThread);
-//    mResponseTask.moveToThread(&mResponseThread);
 }
 
 ZControlTask::~ZControlTask()
 {
-//    endTask(mCaptureTask);
-//    endTask(mRestoreTask);
-//    endTask(mResponseTask);
     stopTask();
 }
 
@@ -35,15 +27,12 @@ void ZControlTask::stopTask()
 {
     mCapture.stop();
     mCaptureTask.wait();
-//    mCaptureThread.wait();
 
     mRestore.stop();
     mRestoreTask.wait();
-//    mRestoreThread.wait();
 
     mBehaviorAnalysis.stop();
     mResponseTask.wait();
-//    mResponseThread.wait();
 }
 
 int ZControlTask::startCapture()
@@ -74,11 +63,9 @@ int ZControlTask::startCapture()
                        mErrorTitle = "捕获停止";
                        mErrorText = mCapture.getError();
                        emit this->promptError(mErrorTitle, mErrorText);
-                       std::cout << "show end" << endl;
                    }
                 }); // lamdba可调用对象
     mCaptureTask.start(); // 启动线程
-//    mCaptureThread.start();// 启动线程
     return 0;
 }
 
@@ -111,7 +98,6 @@ int ZControlTask::startRestore()
     }
     // 启动线程
     mRestoreTask.start();
-//    mRestoreThread.start();
     return 0;
 }
 
@@ -126,12 +112,5 @@ int ZControlTask::startResponse()
         }
     });
     mResponseTask.start();
-//    mResponseThread.start();
     return 0;
 }
-
-//void ZControlTask::endTask(const ZTask &task)
-//{
-//    // end action
-////    task.end();
-//}

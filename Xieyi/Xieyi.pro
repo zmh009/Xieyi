@@ -18,14 +18,11 @@ SOURCES += main.cpp\
     ZResponseWidget.cpp \
     ZControlTask.cpp \
     ZTask.cpp \
-    ZPcapOption.cpp \
     ZCapture.cpp \
     ZBuffer.cpp \
-    ZNetworkData.cpp \
     ZRestore.cpp \
     ZFile.cpp \
     ZSQL.cpp \
-    ZResponse.cpp \
     ZHttp.cpp \
     ZHttps.cpp \
     ZIpv4.cpp \
@@ -41,15 +38,12 @@ HEADERS  += mainwindow.h \
     ZResponseWidget.h \
     ZControlTask.h \
     ZTask.h \
-    ZPcapOption.h \
     ZCapture.h \
     ZBuffer.h \
-    ZNetworkData.h \
     ZRestore.h \
     ZFile.h \
     ZSQL.h \
     ZProcotol.h \
-    ZResponse.h \
     ZHttp.h \
     ZHttps.h \
     ZIpv4.h \

@@ -2,10 +2,6 @@
 #define IAPPLICATION
 #define TYPE_NORMAL "txt"
 #define TYPE_OTHER  "other"
-//#define HTML_TYPE   "html"
-//#define BINARY_TYPE "binary" // 不以此为文件后缀，表示数据类型并控制操作方式
-//#define JS_TYPE     "js"
-//#define CSS_TYPE    "css"
 
 #include <string>
 using std::string;
@@ -23,7 +19,7 @@ public:
 
     virtual const u_char *dataContent() const = 0; // get the Content of data
     virtual int dataLen() const = 0; // get the length of data
-//    virtual void setDataContent(const u_char *Content) = 0; // set the Content of data
+
     virtual string dataType() const = 0;
     virtual string compressionType() const = 0;
     virtual string encodeType() const = 0;

@@ -22,7 +22,6 @@ public:
 
     virtual const u_char *applicationContent() const = 0; // get the Content of application layer
     virtual int applicationLen() const = 0; // get the Content of application layer
-//    virtual void setApplicationContent(const u_char *Content) = 0; // set the Content of application layer
 
     virtual int srcPort() const = 0;
     virtual int dstPort() const = 0;

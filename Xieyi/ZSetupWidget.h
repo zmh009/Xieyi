@@ -6,14 +6,11 @@
 #define ZSetupWidget_H
 #define TIME_MAX_LENGTH 9
 
-//#include <string>
 #include <QWidget>
 #include <QLineEdit>
 #include <QRadioButton>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-//using std::__cxx11::string;
-//#include <QGridLayout>
 
 class ZSetupWidget : public QWidget
 {

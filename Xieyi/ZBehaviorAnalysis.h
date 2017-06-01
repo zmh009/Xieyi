@@ -4,7 +4,6 @@
 
 #ifndef ZBEHAVIORANALYSIS_H
 #define ZBEHAVIORANALYSIS_H
-//#define RECORD_PATH "./record.conf"
 #define CONFIGURATION_PATH "./behaviorAnalysis.conf"
 #define INTERVAL_TIME 1
 #define MAX_COMMUNICATION_TIMES (~(1 << 31))
@@ -51,9 +50,6 @@ private:
     // 访问量过量响应
     int moreVisitResponse(const ZDataItem &dataItem);
 
-    // 加载历史记录
-//    void loadRecord(const string &recordPath);
-
     int readConfiguration(const string &configurationPath);
 private:
     // 存储数据详情，以用于数据分析
@@ -84,7 +80,6 @@ private:
     bool mRun;
     string mError;
 
-//    int mIntervalTime; // 秒，配置文件读取
     int mMaxCommunicationTimes; // 最大通信次数，配置文件读取
     int mMinCommunicationTimes; // 最小通信次数，配置文件读取
     string mLogPath; // 日志文件路径，配置文件读取

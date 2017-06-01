@@ -68,7 +68,6 @@ int ZTcp::srcPort() const
     {
         return -1;
     }
-//    long num = toLong(mTcpContent->mSrcPort,2);
     int num = bytesToNum(mTcpContent->mSrcPort,2); // between max and min of unsigned short
     return num;
 }
@@ -127,9 +126,3 @@ long ZTcp::bytesToNum(const u_char *bytes,int count) const
     }
     return num;
 }
-
-//const TcpForm *ZTcp::tcpContent() const
-//{
-//    return mTcpContent;
-//}
-

@@ -1,7 +1,6 @@
 #ifndef ZTCP_H
 #define ZTCP_H
 
-//#include <iostream>
 #include "ITransport.h"
 
 #define URG 0x20
@@ -10,9 +9,6 @@
 #define RET 0x04
 #define SYN 0x02
 #define FIN 0x01
-
-//typedef unsigned int int;
-//typedef unsigned char char;
 
 struct TcpForm
 {
@@ -47,8 +43,6 @@ public:
     long ackId();
     long seqId();
     u_char sign();
-
-//    const TcpForm *tcpContent() const;
 
 protected:
     long bytesToNum(const u_char *bytes, int count) const;

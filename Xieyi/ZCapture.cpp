@@ -10,12 +10,6 @@ ZCapture::ZCapture()
     mWaitTime = OPTION_WAIT_TIME;
 }
 
-//ZCapture::ZCapture(const ZPcapOption &option) : mOption(option)
-//{
-//    mHandler = nullptr;
-//    qDebug() << "create ZCapture(option)";
-//}
-
 ZCapture::~ZCapture()
 {
     close();
@@ -27,11 +21,9 @@ int ZCapture::start()
     capHandlerT *handler = getHandler();
     if (handler == nullptr)
     {
-//        mInformation.promptError(string("捕获配置设置错误"),string("停止抓捕:")+string(mError));
         return -1;
     }
 
-//    ZNetworkData networkData;
     pcap_pkthdr infor;
     mRun = true;
     while (mRun)
@@ -40,18 +32,13 @@ int ZCapture::start()
         size_t length = infor.len;
         if (data == nullptr)
         {
-//            qDebug() << "get nullptr data, len is "<< length;
             continue;
         }
-//        std::cout << (long)data << std::endl;
-//        showData(data,length);
 
-//        networkData.setNetworkData(data, length);
         // 使用string拷贝存储，因此使用const char*类型
         string networkData((const char*)(data), length);
         if (mBuffer->addData(networkData) == -1)
         {
-//            mInformation.promptError(string("捕获但未添加"),string("停止抓捕:")+string(""));
             return -1;
         }
     }
@@ -90,39 +77,10 @@ void ZCapture::setFilter(const std::__cxx11::string filter)
     mFilter = filter;
 }
 
-//void ZCapture::setOption(const char *netcard, unsigned int maxSize, int prosimc, unsigned int waitTime)
-//{
-//    mNetcard = netcard;
-//    mMaxSize = maxSize;
-//    mProsimc = prosimc;
-//    mWaitTime = waitTime;
-//}
-
-//void ZCapture::setOption(const ZPcapOption &option)
-//{
-//    mOption = option;
-//}
-
-//void ZCapture::setStopStatus(bool status)
-//{
-//    mRun = !status;
-//}
-
-//void ZCapture::setRunStatus(bool status)
-//{
-//    mRun = status;
-//}
-
 const u_char *ZCapture::getData(capHandlerT *handler, pcap_pkthdr *infor)
 {
     const u_char *data = pcap_next(handler, infor);
     return data;
-//    const u_char* data = nullptr;
-//    while (data == nullptr)
-//    {
-//        data = pcap_next(handler, infor);
-//    }
-//    return data;
 }
 
 capHandlerT *ZCapture::getHandler()
@@ -152,7 +110,6 @@ capHandlerT *ZCapture::getHandler()
     {
         goto errorOpr;
     }
-    std::cout << mFilter << std::endl;
     if (pcap_compile(mHandler, &filterSt, mFilter.c_str(), 1, netmask) != 0) // 获得当前的过滤器, 1为优化控制过滤器程序
     {
         const char *pcapError = pcap_geterr(mHandler);
@@ -194,17 +151,3 @@ void ZCapture::close()
         mHandler = nullptr;
     }
 }
-
-//void ZCapture::showData(const u_char *data, u_int length)
-//{
-//    if (data == nullptr)
-//    {
-//        return ;
-//    }
-
-//    for (int i = 0; i < length; ++i)
-//    {
-//        std::cout << std::setfill('0') << std::setw(2) << std::setbase(16)<< (int)data[i] << std::ends;
-//    }
-//    std::cout << std::endl;
-//}

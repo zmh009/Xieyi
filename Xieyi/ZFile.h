@@ -12,11 +12,6 @@ using std::string;
 using std::ofstream;
 using std::ios_base;
 
-//-- test
-#include <iostream>
-using std::cout;
-using std::endl;
-
 class ZFile
 {
 public:
@@ -28,7 +23,6 @@ public:
 
 private:
     int createDir(const string &filePath);
-    // bool IsExist();
     ofstream mOfstr;
 
     string mError;

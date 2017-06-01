@@ -71,31 +71,16 @@ int ZHttps::dataLen() const
 
 std::__cxx11::string ZHttps::dataType() const
 {
-//    if (mHttpsContent == nullptr || mDataLen <= 0)
-//    {
-//        return mDataType;
-//    }
-
     return mDataType;
 }
 
 std::__cxx11::string ZHttps::compressionType() const
 {
-//    if (mHttpsContent == nullptr || mHttpsLen <= 0)
-//    {
-//        return mCompression;
-//    }
-
     return mCompression;
 }
 
 std::__cxx11::string ZHttps::encodeType() const
 {
-//    if (mHttpsContent == nullptr || mHttpsLen <= 0)
-//    {
-//        return mEncode;
-//    }
-
     return mEncode;
 }
 
@@ -113,16 +98,3 @@ bool ZHttps::isAppData()
 
     return (mHttpsContent->mContentType[0])*1 == 23;
 }
-
-//int ZHttps::reserveData(const std::string &dir, const std::string &id)
-//{
-//    if (mHttpsContent == NULL || mDataLen <= 0 || id.empty())
-//    {
-//        return -1;
-//    }
-
-//    std::string path = dir+id+".binary";
-//    std::cout << "https:"<<path.c_str()<<std::endl;
-//    return reserveFile(path.c_str(),(const char*)mHttpsContent->mData,mDataLen,true);
-//}
-

@@ -7,11 +7,8 @@ ZResponseWidget::ZResponseWidget(QWidget *parent) : QWidget(parent)
     // 通过传入this，使用Qt的内存管理特性可防止内存泄露
     mInformationArea = new QTableWidget(0,4,this);
     mInformationArea->setHorizontalHeaderLabels(QStringList{"时间","类型","行为","大小"}); // 设置水平表头标签
-//    mInformationArea->setSelectionBehavior(QAbstractItemView::SelectRows); // 设置选取为整行选择
     mInformationArea->setEditTriggers(QAbstractItemView::NoEditTriggers); // 设置为不可编辑
-//    mInformationArea->verticalHeader()->setVisible(false); // 设置垂直头为不可见
     mInformationArea->setSelectionMode(QAbstractItemView::NoSelection); // 设置为不可选取
-//    mInformationArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff); // 取消水平滚动条
 
     // 通过传入this，使用Qt的内存管理特性可防止内存泄露
     QVBoxLayout *showLayout = new QVBoxLayout(this);
@@ -42,8 +39,6 @@ void ZResponseWidget::resizeEvent(QResizeEvent *event)
     mInformationArea->setColumnWidth(1, size.width()/10*2);
     mInformationArea->setColumnWidth(2, size.width()/10*5);
     mInformationArea->setColumnWidth(3, size.width()/10*1);
-    // 设置修改大小模式为用户不可编辑
-//    mInformationArea->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 }
 
 void ZResponseWidget::add(const string &time, const string &type, const string &behavior, unsigned int size)

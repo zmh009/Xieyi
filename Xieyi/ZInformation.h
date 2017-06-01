@@ -10,10 +10,6 @@
 #include <QString>
 #include <QDialog>
 using std::string;
-//--test
-#include <iostream>
-using namespace std;
-//--test end
 
 class ZInformation : public QObject
 {
@@ -26,7 +22,6 @@ public:
     void promptError(const QString& title, const QString &text);
 
 private:
-//    QDialog mDialog;
     QMessageBox *mMessageBox;
 };
 

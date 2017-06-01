@@ -7,12 +7,10 @@
 #include <QThread>
 #include "ZTask.h"
 
-//#include "ZPcapOption.h"
 #include "ZCapture.h"
 #include "ZSetupWidget.h"
 #include "ZResponseWidget.h"
 #include "ZRestore.h"
-//#include "ZResponse.h"
 #include "ZBehaviorAnalysis.h"
 #include "ZInformation.h"
 
@@ -28,11 +26,8 @@ public:
     void stopTask();
 
 signals:
-//    void
     void promptWarn(const QString& title, const QString& text);
-//    void promptWarn(const char* title, const char* text);
     void promptError(const QString& title, const QString& text);
-//    void promptError(const char* title, const char* text);
 
 private:
     // 底层应用功能
@@ -40,19 +35,12 @@ private:
     int startRestore();
     int startResponse();
 
-    //void endTask(const ZTask &task);
-
-//    QThread mCaptureThread;
-//    QThread mRestoreThread;
-//    QThread mResponseThread;
-
     ZTask mCaptureTask;
     ZTask mRestoreTask;
     ZTask mResponseTask;
 
     ZCapture mCapture;
     ZRestore mRestore;
-//    ZResponse mResponse;
     ZBehaviorAnalysis mBehaviorAnalysis;
 
     ZSetupWidget *mSetupWidget;

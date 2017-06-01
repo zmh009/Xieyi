@@ -3,14 +3,12 @@
 
 #include <functional>
 #include <string>
-//#include <QObject>
 #include <QThread>
 using std::function;
 using std::string;
 typedef function<void ()> FunctionT;
 
 class ZTask : public QThread
-//class ZTask : public QObject
 {
     Q_OBJECT
 public:
@@ -20,8 +18,6 @@ public:
 
     virtual void run();
     void setFunction(const FunctionT &task);
-
-//    void stop();
 
 private:
     FunctionT mFunction;

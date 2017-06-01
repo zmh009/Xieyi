@@ -5,19 +5,9 @@
 #include <string>
 #include <queue>
 #include <vector>
-//#include "ZNetworkData.h"
 using std::string;
 using std::queue;
 using std::vector;
-
-//typedef int readHandlerT;
-//typedef string networkDataT;
-//typedef queue<networkDataT> bufferT;
-
-//--test
-#include <QDebug>
-#include <QThread>
-#include <iostream>
 
 class ZBuffer
 {
@@ -33,8 +23,6 @@ public:
     void closeRead(const readHandlerT &handler);
 
     networkDataT read(const readHandlerT &handler);
-//    int addData(const u_char *networkData);
-//    int addData(const ZNetworkData &networkData);
     int addData(const string &networkData);
 private:
     ZBuffer(int readerCount);

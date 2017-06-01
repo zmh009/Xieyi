@@ -15,9 +15,6 @@
 #include "ZResponseWidget.h"
 #include "ZControlTask.h"
 
-// Debug
-#include <QDebug>
-
 namespace Ui {
 class MainWindow;
 }

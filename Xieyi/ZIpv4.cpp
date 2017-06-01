@@ -38,12 +38,6 @@ void ZIpv4::setNetworkContent(const u_char *content, int length)
         mTransportLen = 0;
         return ;
     }
-//    cout<<"ZIpv4::setNetworkContent"<<endl;
-//    for (int i = 0; i < length; ++i)
-//    {
-//        std::cout << std::setw(2) << std::setfill('0') << std::setbase(16) << (int)Content[i] << std::ends;
-//    }
-//    cout<<endl;
     mIpContent = (Ipv4Form*)content;
     mIpv4Len = length;
     u_char headLen = (mIpContent->mVersionAndHeadLen[0] & 0x0F);
@@ -79,7 +73,6 @@ std::__cxx11::string ZIpv4::srcIp() const
         return string();
     }
 
-//    return getIpFormat(mIpContent->mSrcIP, IP_LENGTH);
     return getIpFormat(mIpContent->mSrcIP, sizeof(mIpContent->mSrcIP));
 }
 
@@ -90,21 +83,8 @@ std::__cxx11::string ZIpv4::dstIp() const
         return nullptr;
     }
 
-//    for (int i = 0; i < mIpv4Len; ++i) // <<-
-//    {
-//        std::cout << std::setw(2) << std::setfill('0') << std::setbase(16) << (int)mIpContent->mVersionAndHeadLen[i] << std::ends;
-//    }
-//    std::cout << std::endl;
-//    return mIpContent->mDesIP;
-
-//    return getIpFormat(mIpContent->mDstIP, IP_LENGTH);
     return getIpFormat(mIpContent->mDstIP, sizeof(mIpContent->mDstIP));
 }
-
-//int ZIpv4::getDataType()
-//{
-//    return (int)mIpContent->mProcotol[0];
-//}
 
 std::__cxx11::string ZIpv4::getIpFormat(const u_char *networkIp, int length) const
 {

@@ -14,7 +14,6 @@ ZInformation::~ZInformation()
 void ZInformation::promptWarn(const QString &title, const QString &text)
 {
     // Qt 警告对话框
-//    QMessageBox::warning(nullptr, QString(title.c_str()), QString(text.c_str()));
     mMessageBox->setWindowTitle(title);
     mMessageBox->setText(text);
     mMessageBox->setIcon(QMessageBox::Warning);
@@ -24,7 +23,6 @@ void ZInformation::promptWarn(const QString &title, const QString &text)
 void ZInformation::promptError(const QString &title, const QString &text)
 {
     // Qt 警告对话框
-//    QMessageBox::critical(nullptr, QString(title.c_str()), QString(text.c_str()));
     mMessageBox->setWindowTitle(title);
     mMessageBox->setText(text);
     mMessageBox->setIcon(QMessageBox::Critical);

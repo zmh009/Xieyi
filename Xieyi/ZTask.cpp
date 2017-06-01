@@ -25,8 +25,3 @@ void ZTask::setFunction(const FunctionT &task)
 {
     mFunction = task;
 }
-
-//void ZTask::stop()
-//{
-
-//}

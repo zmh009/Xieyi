@@ -18,7 +18,6 @@ ZFile::~ZFile()
  */
 int ZFile::write(const std::__cxx11::string &filePath, const std::__cxx11::string &data, bool isBinary)
 {
-    cout << "write to " <<filePath <<"("<<data.length()<<")"<< endl;
     if (filePath.empty() || data.empty())
     {
         // 空数据不操作

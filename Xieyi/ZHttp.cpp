@@ -78,11 +78,6 @@ void ZHttp::setApplicationContent(const u_char *content, int length)
     else if (index+1 >= length)
     {
         mHttpForm.mType = UNKNOW;
-        //---//
-        if (1 || mDataLen == 0 || mDataType.empty() || mCompression.empty())
-        {
-//            show();
-        }
         return ;
     }
     //--------------------http row end------------------//
@@ -114,18 +109,6 @@ void ZHttp::setApplicationContent(const u_char *content, int length)
     mHttpForm.mBodyEnd = length;
     mDataLen = mHttpLen > mHttpForm.mBodyBegin ? mHttpLen - mHttpForm.mBodyBegin : 0;
     setType();
-    //--test
-    std::cout << "type is " << mHttpForm.mType << std::endl;
-    if (mDataType == "")
-    {
-        mDataType == "";
-    }
-    if (mDataLen <= 5)
-    {
-        show();
-        std::cout << "mDataLen(" <<mDataLen<<") mHttpLen("<<mHttpLen<<")"<<std::endl;
-    }
-
     return ;
 }
 
@@ -142,10 +125,6 @@ const u_char *ZHttp::dataContent() const
     {
         // 响应报文POST数据非空时恢复POST数据
         return mHttpData+mHttpForm.mBodyBegin;
-//        if (mHttpForm.mBodyBegin == 0)
-//        {
-//            std::cout << "offset is 0" << std::endl;
-//        }
     }
     else
     {
@@ -176,51 +155,6 @@ int ZHttp::dataLen() const
  */
 std::__cxx11::string ZHttp::dataType() const
 {
-//    if (mHttpData == nullptr || mHttpLen <= 0)
-//    {
-//        return string();
-//    }
-
-    // test
-//    if (mDataType == "" && mDataLen !=0 && mHttpData != nullptr)
-//    {
-//        string type = "";
-//    }
-    // --test end
-
-//    // 在数据类型为空时提示是请求或应答报文
-//    if (mDataType.empty())
-//    {
-//        if (request())
-//        {
-//            return string(".HttpRequst");
-//        }
-//        else if (respond())
-//        {
-//            return string(".HttpRespond");
-//        }
-//        else if (unknow())
-//        {
-//            if (mDataLen != 0)
-//            {
-//                string str("123");
-//            }
-//            return string(".HttpBinary");
-//        }
-//        else
-//        {
-//            return string(".EMPTY");
-//        }
-//    }
-//    // 在数据类型为空时判断是否为请求报文
-//    if (mDataType.empty() && request())
-//    {
-//        return string(".HttpRequst");
-//    }
-//    else
-//    {
-//        return mDataType;
-//    }
     if (isEmpty() || isUnknow())
     {
         // 没有数据或未知返回空
@@ -245,27 +179,12 @@ std::__cxx11::string ZHttp::dataType() const
 
 std::__cxx11::string ZHttp::compressionType() const
 {
-//    if (mHttpData == nullptr || mHttpLen <= 0)
-//    {
-//        return string();
-//    }
-    // --test
-    if (mCompression == "")
-    {
-        string type = "";
-    }
-    // -- test end
     return mCompression;
 }
 
 // Http协议为明文传输
 std::__cxx11::string ZHttp::encodeType() const
 {
-//    if (mHttpData == nullptr || mHttpLen <= 0)
-//    {
-//        return string();
-//    }
-
     return mEncode;
 }
 
@@ -291,9 +210,6 @@ void ZHttp::setType()
         mHttpForm.mType = UNKNOW;
         return;
     }
-
-//    u_int index = mHttpForm.mHeadBegin;
-//    u_int index = mHttpForm.mRowBegin;
     const char* http = (const char*)mHttpData;
 
     // 判断是否为响应报文的依据是判断在HTTP行是否有协议版本号
@@ -318,64 +234,15 @@ void ZHttp::setType()
 
     mHttpForm.mType = UNKNOW;
     return ;
-//    //find out ' '
-//    while (index < mHttpForm.mRowEnd && mHttpData[index] != ' ')
-//    {
-//        ++index;
-//    }
-//    //ignore ' '
-//    while (index < mHttpForm.mRowEnd && mHttpData[index] == ' ')
-//    {
-//        ++index;
-//    }
-
-//    //judging type is request or respond:
-//    //if the second column like some special form while such as "1xx" or "2xx" and etc,
-//    //the type is respond
-//    if ('1' <= mHttpData[index] && mHttpData[index] <= '5' &&
-//        '0' <= mHttpData[index+1] && mHttpData[index+1] <= '9' &&
-//        '0' <= mHttpData[index+2] && mHttpData[index+2] <= '9' &&
-//        mHttpData[index+3] == ' ')
-//    {
-//        mHttpForm.mType = RESPOND;
-//    }
-//    else
-//    {
-//        mHttpForm.mType = REQUEST;
-//    }
-
-//    if (mHttpData[index] < '1' && mHttpData[index] > '5')
-//    {
-//        mHttpForm.mType = REQUEST;
-//    }
-//    else if (mHttpData[index+1] < '0' && mHttpData[index+1] > '9')
-//    {
-//        mHttpForm.mType = REQUEST;
-//    }
-//    else if (mHttpData[index+2] < '0' && mHttpData[index+2] > '9')
-//    {
-//        mHttpForm.mType = REQUEST;
-//    }
-//    else if (mHttpData[index+3] != ' ')
-//    {
-//        mHttpForm.mType = REQUEST;
-//    }
-//    else
-//    {
-//        mHttpForm.mType = RESPOND;
-//    }
-//    return ;
 }
 
 bool ZHttp::isRequest() const
 {
-//    setType();
     return mHttpForm.mType == REQUEST;
 }
 
 bool ZHttp::isRespond() const
 {
-//    setType();
     return mHttpForm.mType == RESPOND;
 }
 
@@ -383,114 +250,6 @@ bool ZHttp::isUnknow() const
 {
     return mHttpForm.mType == UNKNOW;
 }
-
-/* 判断是否是二进制数据
- */
-//bool ZHttp::binary()
-//{
-
-//    if (!mCompression.empty())
-//    {
-//        // 如果是压缩文件，则是二进制数据
-//        return true;
-//    }
-//    else
-//    {
-//        return mBin;
-//    }
-////    return true;
-//}
-
-//const std::string &ZHttp::encode()
-//{
-//    if (mHttpData == NULL)
-//    {
-//        mCompression = "";
-//    }
-//    else if (mHttpForm.mType == UNKNOW)
-//    {
-//        mCompression = "";
-//    }
-//    return mCompression;
-//}
-
-//const std::string &ZHttp::format()
-//{
-//    if (mHttpData == NULL)
-//    {
-//        mDataType = "";
-//    }
-//    else if (mHttpForm.mType == UNKNOW)
-//    {
-//        mDataType = DUNKNOW;
-//    }
-//    return mDataType;
-//}
-
-void ZHttp::show()
-{
-    for (u_int i = 0 ; i < mHttpLen; ++i)
-    {
-        std::cout << mHttpData[i];
-    }
-    std::cout << std::endl;
-//    for (u_int i = 0; i < mHttpForm.mHeadEnd; ++i)
-//    {
-////        printf("%c",mHttpData[i]);
-//        std::cout << mHttpData[i];
-//    }
-//    std::cout << std::endl;
-
-//    for (u_int i = mHttpForm.mBodyBegin; i < mHttpLen; ++i)
-//    {
-//        std::cout << std::hex << std::setw(2)<<std::setfill('0')<<mHttpData[i];
-//    }
-//    std::cout << std::dec << std::setw(0)<<std::setfill(' ')<<std::endl;
-}
-
-//void ZHttp::fileType(std::string &suffix)
-//{
-//    if (mHttpData == NULL || mHttpForm.mType == UNKNOW)
-//    {
-//        suffix = "";
-//        mBin = true;
-//        return ;
-//    }
-
-//    int count = 0;
-//    for (std::list<u_int>::iterator iter = mHttpForm.mHandLine.begin(); iter != mHttpForm.mHandLine.end() && count < 2; ++iter)
-//    {
-//        if (!strncmp((const char*)mHttpData+*iter,HTTP_COMPRESSION_KEY,strlen(HTTP_COMPRESSION_KEY)))
-//        {
-//            ++count;
-//            setEncode(*iter);
-//        }
-//        else if (!strncmp((const char*)mHttpData+*iter,HTTP_TYPE_KEY,strlen(HTTP_TYPE_KEY)))
-//        {
-//            ++count;
-//            setFormat(*iter);
-//        }
-//    }
-
-//    suffix = mDataType+mEncode;
-//    return ;
-//}
-
-//int ZHttp::reserveData(const std::string &dir, const std::string &id)
-//{
-//    if (mHttpData == NULL || dir.empty() || id.empty())
-//    {
-//        return -1;
-//    }
-
-//    std::string path = mDataType+mEncode;
-////    fileType(path);
-
-//    path = dir+id+path;
-//    std::cout << "path is:"<<path.c_str() << std::endl;
-//    reserveFile(path.c_str(),(const char*)mHttpData+mHttpForm.mBodyBegin,mDataLen,mBin);
-//    return 0;
-//}
 
 void ZHttp::setCompression(u_int index)
 {
@@ -517,7 +276,6 @@ void ZHttp::setCompression(u_int index)
     }
 
     // set encode
-    std::cout << "mCompression is :"<<mCompression<<std::endl;
     if (mCompression == "gzip")
     {
         mCompression = COMPRESSION_GZIP;
@@ -533,7 +291,6 @@ void ZHttp::setCompression(u_int index)
                 *iter = '&';
             }
         }
-//        mCompression = '.'+mCompression;
     }
 }
 
@@ -564,7 +321,6 @@ void ZHttp::setFormat(u_int index)
     }
 
     // set format type
-    std::cout << "fromat is :"<<mDataType << std::endl;
     if (mDataType == "text/html")
     {
         mDataType = TYPE_HTML;
@@ -641,7 +397,6 @@ void ZHttp::setFormat(u_int index)
                 *iter = '&';
             }
         }
-        mDataType = '.'+mDataType;
         mBin = true;
     }
 }
